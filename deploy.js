@@ -53,7 +53,7 @@ async function runSchema(ref, password) {
 const SKIP_NAMES = new Set([
   "_legacy", "node_modules", "README.md", ".gitignore",
   "supabase_schema.sql", "package.json", "package-lock.json",
-  "deploy.js", "deploy.bat", "deploy.ps1"
+  "deploy.js", "deploy.bat", "deploy.ps1", ".htaccess"
 ]);
 
 function listFiles(dir, prefix) {
@@ -80,7 +80,13 @@ async function uploadAll(url, key) {
   let fail = 0;
   for (const f of files) {
     const buf = fs.readFileSync(f.full);
-    const ct = mime.lookup(f.full) || "application/octet-stream";
+    let ct = mime.lookup(f.full) || "application/octet-stream";
+    
+    // Força o Content-Type correto para HTML
+    if (f.rel.endsWith('.html')) {
+      ct = 'text/html; charset=utf-8';
+    }
+    
     const r = await sb.storage.from("web").upload(f.rel, buf, {
       contentType: ct,
       upsert: true
