@@ -37,12 +37,9 @@ function prompt(question) {
 }
 
 async function runSchema(ref, password) {
+  const connectionString = `postgresql://postgres:${password}@db.${ref}.supabase.co:5432/postgres`;
   const client = new Client({
-    host: `db.${ref}.supabase.co`,
-    port: 5432,
-    user: "postgres",
-    password,
-    database: "postgres",
+    connectionString,
     ssl: { rejectUnauthorized: false }
   });
   await client.connect();
