@@ -113,7 +113,12 @@ async function uploadAll(url, key) {
     if (!pwd) throw new Error("Senha do banco obrigatoria.");
 
     console.log("\n[1/2] Aplicando schema SQL...");
-    await runSchema(cfg.ref, pwd);
+    try {
+      await runSchema(cfg.ref, pwd);
+    } catch (e) {
+      console.log("  [AVISO] Não foi possível conectar ao banco de dados. Continuando com upload dos arquivos...");
+      console.log("  Erro: " + e.message);
+    }
 
     console.log("\n[2/2] Subindo arquivos para o bucket 'web'...");
     const r = await uploadAll(cfg.url, cfg.key);
