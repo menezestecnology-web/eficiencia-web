@@ -1,0 +1,10 @@
+node_modules/
+dist/ build/ out/
+*.log
+.env .env.local .env.*.local
+.vscode/ .idea/ .DS_Store Thumbs.db
+js/config.js
+_legacy/
+supabase/.temp/ supabase/.branches/
+EficienciaIndividual_Manual_Desenvolvedor.pdf
+*_Manual_Desenvolvedor.pdf

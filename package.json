@@ -1,0 +1,14 @@
+{
+  "name": "eficiencia-web-deploy",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Script de deploy do sistema Eficiencia Individual para Supabase",
+  "scripts": {
+    "deploy": "node deploy.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
+    "mime-types": "^2.1.35",
+    "pg": "^8.13.0"
+  }
+}

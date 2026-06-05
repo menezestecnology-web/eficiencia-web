@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Sistema Eficiência Individual · Portal</title>
+<style>
+:root{
+  --navy:#0b2545; --navy2:#163c69; --blue:#2563eb; --blue-d:#1d4ed8;
+  --blue-l:#eff6ff; --blue-ll:#dbeafe; --ink:#0b1220; --ink2:#334155;
+  --ink3:#4b617a; --ink4:#6b7c93; --line:#e6eef8; --line2:#f4f7fb;
+  --bg:#f6f9fb; --surface:#ffffff; --green-d:#047857; --red-d:#b91c1c;
+  --shadow-card:0 6px 20px rgba(11,37,70,.08),0 2px 6px rgba(11,37,70,.04);
+}
+*,::before,::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(180deg,#f6f9fb 0%,#eef4fb 100%);
+  color:var(--ink);min-height:100vh;font-size:13px;line-height:1.5;padding:40px 20px}
+.wrap{max-width:760px;margin:0 auto}
+.brand{text-align:center;margin-bottom:34px}
+.brand .logo{display:inline-flex;align-items:center;justify-content:center;
+  width:62px;height:62px;border-radius:16px;background:linear-gradient(135deg,var(--navy),var(--navy2));
+  color:#fff;font-size:28px;margin-bottom:14px;box-shadow:0 8px 22px rgba(13,35,66,.3)}
+.brand h1{font-size:22px;color:var(--navy);font-weight:800;letter-spacing:.2px}
+.brand p{color:var(--ink4);font-size:12px;margin-top:4px;font-weight:600}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;
+  padding:24px;box-shadow:var(--shadow-card);margin-bottom:18px}
+.sec-title{font-size:11px;font-weight:800;color:var(--navy);text-transform:uppercase;
+  letter-spacing:.08em;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.sec-title .ic{font-size:16px}
+.empresas{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.emp-card{display:block;padding:18px 18px 16px;background:linear-gradient(135deg,var(--blue-l),var(--blue-ll));
+  border:1.5px solid var(--blue-ll);border-radius:12px;text-decoration:none;color:var(--navy);
+  transition:transform .15s ease,box-shadow .15s ease;cursor:pointer}
+.emp-card:hover{transform:translateY(-3px);box-shadow:0 12px 24px rgba(37,99,235,.20);
+  border-color:var(--blue)}
+.emp-card .nome{font-size:14px;font-weight:800;line-height:1.25}
+.emp-card .slug{font-size:10.5px;color:var(--ink2);margin-top:6px;font-family:Consolas,monospace;
+  background:rgba(255,255,255,.55);padding:2px 7px;border-radius:5px;display:inline-block}
+.emp-card .upd{font-size:9.5px;color:var(--ink3);margin-top:8px;font-weight:600}
+.empty{text-align:center;color:var(--ink4);padding:34px 20px;font-size:12.5px}
+.row{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end}
+.field label{display:block;font-size:10px;font-weight:800;color:var(--ink3);
+  text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
+.field input{width:100%;padding:10px 12px;border:1.5px solid var(--line);
+  border-radius:8px;font-size:13px;color:var(--ink);font-family:inherit;
+  background:var(--surface);transition:border-color .15s}
+.field input:focus{outline:none;border-color:var(--blue)}
+.field input::placeholder{color:#94a3b8}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 20px;
+  background:linear-gradient(135deg,var(--blue),var(--blue-d));color:#fff;border:none;
+  border-radius:9px;font-weight:700;font-size:12.5px;cursor:pointer;
+  transition:transform .15s ease,box-shadow .15s ease;font-family:inherit;height:38px}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 14px rgba(37,99,235,.30)}
+.hint{font-size:11px;color:var(--ink4);margin-top:8px}
+.footer{text-align:center;color:var(--ink4);font-size:10.5px;margin-top:30px;font-style:italic}
+.toast{position:fixed;top:24px;right:24px;background:#fff;border:1px solid var(--line);
+  border-left:4px solid var(--blue);border-radius:10px;padding:12px 18px;font-size:12.5px;
+  font-weight:600;color:var(--navy);box-shadow:0 12px 28px rgba(11,37,70,.18);
+  opacity:0;transform:translateY(-8px);transition:.25s;z-index:50}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.err{border-left-color:var(--red-d);color:var(--red-d)}
+.toast.ok{border-left-color:var(--green-d);color:var(--green-d)}
+@media(max-width:600px){
+  .row{grid-template-columns:1fr;gap:12px}
+  .btn{width:100%;justify-content:center}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">
+    <div class="logo">🏭</div>
+    <h1>Sistema de Eficiência Individual</h1>
+    <p>MenezesTecnologia · Portal de Empresas</p>
+  </div>
+
+  <div class="card">
+    <div class="sec-title"><span class="ic">📁</span>Empresas cadastradas</div>
+    <div id="empresas" class="empresas">
+      <div class="empty">Carregando...</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sec-title"><span class="ic">➕</span>Cadastrar nova empresa</div>
+    <form id="form-nova">
+      <div class="row">
+        <div class="field">
+          <label>Identificador</label>
+          <input id="slug" type="text" placeholder="ex: acme" pattern="[a-z0-9-]{2,32}" required>
+        </div>
+        <div class="field">
+          <label>Nome de exibição</label>
+          <input id="nome" type="text" placeholder="Ex: ACME Indústrias" required>
+        </div>
+        <button class="btn" type="submit"><span>➕</span>Criar</button>
+      </div>
+      <div class="hint">O identificador é usado na URL (<code>?empresa=acme</code>). Apenas letras minúsculas, números e hífen — sem espaços ou acentos.</div>
+    </form>
+  </div>
+
+  <div class="footer">Desenvolvido por MenezesTecnologia</div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script>
+"use strict";
+
+var cfg = window.APP_CONFIG || {};
+if (!cfg.SUPABASE_URL || !cfg.SUPABASE_PUBLISHABLE_KEY) {
+  document.querySelector(".wrap").innerHTML =
+    '<div class="card" style="border-color:#fecaca;background:#fff1f1;color:#7f1d1d">' +
+    '<div style="font-size:18px;font-weight:800;margin-bottom:6px">Configuração ausente</div>' +
+    '<div>Edite <code>js/config.js</code> com as credenciais do Supabase.</div></div>';
+} else {
+  var sb = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_PUBLISHABLE_KEY,
+    { auth: { persistSession: false, autoRefreshToken: false } });
+
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function brDate(iso) {
+    if (!iso) return "";
+    var d = new Date(iso); if (isNaN(d)) return "";
+    return d.toLocaleDateString("pt-BR") + " " + d.toTimeString().slice(0, 5);
+  }
+  function toast(msg, type) {
+    var el = document.getElementById("toast");
+    el.className = "toast show" + (type ? " " + type : "");
+    el.textContent = msg;
+    setTimeout(function () { el.className = "toast"; }, 2800);
+  }
+
+  async function loadEmpresas() {
+    var host = document.getElementById("empresas");
+    var r = await sb.from("app_state").select("empresa,nome,updated_at,data").order("nome");
+    if (r.error) {
+      host.innerHTML = '<div class="empty" style="color:var(--red-d)">Erro: ' + esc(r.error.message) + '</div>';
+      return;
+    }
+    if (!r.data || !r.data.length) {
+      host.innerHTML = '<div class="empty">Nenhuma empresa cadastrada ainda.<br>Cadastre a primeira no formulário abaixo.</div>';
+      return;
+    }
+    host.innerHTML = r.data.map(function (e) {
+      var hasData = !!e.data;
+      return '<a class="emp-card" href="index.html?empresa=' + encodeURIComponent(e.empresa) + '">' +
+        '<div class="nome">' + esc(e.nome) + '</div>' +
+        '<div class="slug">' + esc(e.empresa) + '</div>' +
+        '<div class="upd">' + (hasData ? 'Última atualização: ' + brDate(e.updated_at) : 'Sistema novo (sem dados ainda)') + '</div>' +
+      '</a>';
+    }).join("");
+  }
+
+  document.getElementById("form-nova").addEventListener("submit", async function (ev) {
+    ev.preventDefault();
+    var slug = (document.getElementById("slug").value || "").trim().toLowerCase();
+    var nome = (document.getElementById("nome").value || "").trim();
+    if (!/^[a-z0-9-]{2,32}$/.test(slug)) {
+      toast("Identificador inválido (use a-z, 0-9, hífen, 2-32 chars).", "err"); return;
+    }
+    if (!nome) { toast("Informe o nome da empresa.", "err"); return; }
+    var r = await sb.from("app_state").insert({ empresa: slug, nome: nome, data: null });
+    if (r.error) {
+      toast("Erro: " + r.error.message, "err"); return;
+    }
+    toast('Empresa "' + nome + '" criada. Abrindo o sistema...', "ok");
+    setTimeout(function () { location.href = "index.html?empresa=" + encodeURIComponent(slug); }, 700);
+  });
+
+  loadEmpresas();
+}
+</script>
+</body>
+</html>
